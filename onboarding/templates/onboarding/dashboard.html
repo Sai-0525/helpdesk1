@@ -1,0 +1,231 @@
+{% extends 'onboarding/base.html' %}
+
+{% block title %}Dashboard - ITIL Ticketing System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-tachometer-alt me-2"></i>Service Desk Dashboard</h1>
+    <div>
+        <a href="{% url 'onboarding:ticket_create' %}" class="btn btn-primary me-2">
+            <i class="fas fa-plus me-1"></i>New Ticket
+        </a>
+        <div class="btn-group" role="group">
+            <a href="{% url 'onboarding:incident_list' %}" class="btn btn-outline-danger">
+                <i class="fas fa-exclamation-triangle me-1"></i>Incidents
+            </a>
+            <a href="{% url 'onboarding:problem_list' %}" class="btn btn-outline-warning">
+                <i class="fas fa-cogs me-1"></i>Problems
+            </a>
+            <a href="{% url 'onboarding:change_list' %}" class="btn btn-outline-success">
+                <i class="fas fa-exchange-alt me-1"></i>Changes
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ITIL Metrics Cards -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="card metric-card border-primary">
+            <div class="card-body text-center">
+                <i class="fas fa-ticket-alt fa-2x text-primary mb-2"></i>
+                <h4 class="card-title">{{ metrics.total_assigned }}</h4>
+                <p class="card-text text-muted">My Tickets</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card metric-card border-danger">
+            <div class="card-body text-center">
+                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                <h4 class="card-title">{{ metrics.incidents }}</h4>
+                <p class="card-text text-muted">Incidents</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card metric-card border-warning">
+            <div class="card-body text-center">
+                <i class="fas fa-cogs fa-2x text-warning mb-2"></i>
+                <h4 class="card-title">{{ metrics.problems }}</h4>
+                <p class="card-text text-muted">Problems</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card metric-card border-success">
+            <div class="card-body text-center">
+                <i class="fas fa-exchange-alt fa-2x text-success mb-2"></i>
+                <h4 class="card-title">{{ metrics.changes }}</h4>
+                <p class="card-text text-muted">Changes</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card metric-card border-info">
+            <div class="card-body text-center">
+                <i class="fas fa-spinner fa-2x text-info mb-2"></i>
+                <h4 class="card-title">{{ metrics.in_progress }}</h4>
+                <p class="card-text text-muted">In Progress</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card metric-card border-dark">
+            <div class="card-body text-center">
+                <i class="fas fa-clock fa-2x text-danger mb-2"></i>
+                <h4 class="card-title">{{ metrics.overdue }}</h4>
+                <p class="card-text text-muted">Overdue SLA</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Recent Tickets -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Ticket Activity</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_tickets %}
+                <div class="list-group list-group-flush">
+                    {% for ticket in recent_tickets %}
+                    <div class="list-group-item d-flex justify-content-between align-items-start">
+                        <div class="ms-2 me-auto">
+                            <div class="fw-bold">
+                                <a href="{% url 'onboarding:ticket_detail' ticket.pk %}" class="text-decoration-none">
+                                    {{ ticket.ticket_id }} {{ ticket.title }}
+                                </a>
+                            </div>
+                            <small class="text-muted">
+                                <span class="badge bg-{{ ticket.ticket_type_css_class }} me-1">{{ ticket.get_ticket_type_display }}</span>
+                                {{ ticket.category.title }} • {{ ticket.reporter_name }}
+                                {% if ticket.is_overdue %}
+                                <span class="badge bg-danger ms-1">OVERDUE</span>
+                                {% endif %}
+                            </small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-{{ ticket.priority_css_class }} rounded-pill">
+                                {{ ticket.get_status_display }}
+                            </span>
+                            <div><small class="text-muted">{{ ticket.modified|timesince }} ago</small></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'onboarding:ticket_list' %}" class="btn btn-outline-primary">View All Tickets</a>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p>No recent ticket activity</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Urgent Tickets -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-exclamation-circle me-2"></i>Urgent Tickets</h5>
+            </div>
+            <div class="card-body">
+                {% if urgent_tickets %}
+                <div class="list-group list-group-flush">
+                    {% for ticket in urgent_tickets %}
+                    <div class="list-group-item px-0 py-2 {% if ticket.is_overdue %}border-danger{% endif %}">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold">
+                                    <a href="{% url 'onboarding:ticket_detail' ticket.pk %}"
+                                        class="text-decoration-none">
+                                        {{ ticket.ticket_id }}
+                                    </a>
+                                </div>
+                                <small class="text-muted d-block">{{ ticket.title|truncatechars:40 }}</small>
+                                <span class="badge bg-{{ ticket.ticket_type_css_class }} me-1">{{ ticket.get_ticket_type_display }}</span>
+                                {% if ticket.is_overdue %}
+                                <span class="badge bg-danger">OVERDUE</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-{{ ticket.priority_css_class }}">
+                                    P{{ ticket.priority }}
+                                </span>
+                                <div><small class="text-muted">{{ ticket.hours_since_created }}h</small></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'onboarding:ticket_list' %}?priority=1&priority=2"
+                        class="btn btn-outline-danger">View All Urgent</a>
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-check-circle fa-2x mb-3"></i>
+                    <p>No urgent tickets</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Service Category Statistics (if user is a manager) -->
+{% if dept_stats %}
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>Service Category Overview</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for stat in dept_stats %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card border-secondary">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ stat.department.title }}</h6>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="fw-bold">{{ stat.total }}</div>
+                                        <small class="text-muted">Total</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold text-info">{{ stat.new }}</div>
+                                        <small class="text-muted">New</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="fw-bold text-danger">{{ stat.overdue }}</div>
+                                        <small class="text-muted">Overdue</small>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="{% url 'onboarding:ticket_list' %}?department={{ stat.department.id }}"
+                                        class="btn btn-sm btn-outline-primary">View Tickets</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

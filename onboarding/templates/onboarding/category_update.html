@@ -1,0 +1,128 @@
+{% extends 'onboarding/base.html' %}
+
+{% block title %}Edit {{ object.title }} - ITIL Service Desk{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Edit Service Category</h4>
+                <small class="text-muted">{{ object.title }}</small>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">
+                                {{ form.title.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.help_text %}
+                            <div class="form-text">{{ form.title.help_text }}</div>
+                            {% endif %}
+                            {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.slug.id_for_label }}" class="form-label">
+                                {{ form.slug.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.slug }}
+                            {% if form.slug.help_text %}
+                            <div class="form-text">{{ form.slug.help_text }}</div>
+                            {% endif %}
+                            {% if form.slug.errors %}
+                            <div class="text-danger">{{ form.slug.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                {{ form.description.label }}
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.help_text %}
+                            <div class="form-text">{{ form.description.help_text }}</div>
+                            {% endif %}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.email_address.id_for_label }}" class="form-label">
+                                {{ form.email_address.label }}
+                            </label>
+                            {{ form.email_address }}
+                            {% if form.email_address.help_text %}
+                            <div class="form-text">{{ form.email_address.help_text }}</div>
+                            {% endif %}
+                            {% if form.email_address.errors %}
+                            <div class="text-danger">{{ form.email_address.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.manager.id_for_label }}" class="form-label">
+                                {{ form.manager.label }}
+                            </label>
+                            {{ form.manager }}
+                            {% if form.manager.help_text %}
+                            <div class="form-text">{{ form.manager.help_text }}</div>
+                            {% endif %}
+                            {% if form.manager.errors %}
+                            <div class="text-danger">{{ form.manager.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    {{ form.is_active.label }}
+                                </label>
+                            </div>
+                            {% if form.is_active.help_text %}
+                            <div class="form-text">{{ form.is_active.help_text }}</div>
+                            {% endif %}
+                            {% if form.is_active.errors %}
+                            <div class="text-danger">{{ form.is_active.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <div class="form-check">
+                                {{ form.auto_assign_to_manager }}
+                                <label class="form-check-label" for="{{ form.auto_assign_to_manager.id_for_label }}">
+                                    {{ form.auto_assign_to_manager.label }}
+                                </label>
+                            </div>
+                            {% if form.auto_assign_to_manager.help_text %}
+                            <div class="form-text">{{ form.auto_assign_to_manager.help_text }}</div>
+                            {% endif %}
+                            {% if form.auto_assign_to_manager.errors %}
+                            <div class="text-danger">{{ form.auto_assign_to_manager.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'onboarding:category_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

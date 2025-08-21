@@ -1,0 +1,327 @@
+{% extends 'onboarding/base.html' %}
+
+{% block title %}{{ ticket.ticket_id }} - ITIL Service Desk{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <!-- Ticket Details -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">
+                        <span class="badge bg-{{ ticket.ticket_type_css_class }} me-2">{{ ticket.get_ticket_type_display
+                            }}</span>
+                        {{ ticket.ticket_id }} - {{ ticket.title }}
+                    </h5>
+                    {% if ticket.is_overdue %}
+                    <span class="badge bg-danger">OVERDUE SLA</span>
+                    {% endif %}
+                </div>
+                <div class="btn-group">
+                    <a href="{% url 'onboarding:ticket_update' ticket.pk %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>Edit
+                    </a>
+                    {% if ticket.status != ticket.CLOSED_STATUS %}
+                    <a href="{% url 'onboarding:close_ticket' ticket.pk %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-check me-1"></i>Close
+                    </a>
+                    {% else %}
+                    <a href="{% url 'onboarding:reopen_ticket' ticket.pk %}" class="btn btn-outline-warning btn-sm">
+                        <i class="fas fa-redo me-1"></i>Reopen
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Description:</strong>
+                        <p class="mt-2">{{ ticket.description|linebreaks }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <strong>Status:</strong><br>
+                                <span class="badge bg-{{ ticket.priority_css_class }}">{{ ticket.get_status_display
+                                    }}</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Priority:</strong><br>
+                                <span class="badge bg-{{ ticket.priority_css_class }}">{{ ticket.get_priority_display
+                                    }}</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Impact:</strong><br>
+                                <span class="badge bg-info">{{ ticket.get_impact_display }}</span>
+                            </div>
+                            <div class="col-6">
+                                <strong>Urgency:</strong><br>
+                                <span class="badge bg-warning">{{ ticket.get_urgency_display }}</span>
+                            </div>
+                            <div class="col-12">
+                                <strong>Affected Service:</strong><br>
+                                {{ ticket.affected_service|default:"Not specified" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if ticket.resolution %}
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-check-circle me-1"></i>Resolution</h6>
+                    {{ ticket.resolution|linebreaks }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Ticket Updates -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-comments me-2"></i>Updates & Comments</h6>
+            </div>
+            <div class="card-body">
+                {% if progress_updates %}
+                <div class="timeline">
+                    {% for update in progress_updates %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ update.title|default:"Update" }}</h6>
+                                    <small class="text-muted">
+                                        by {{ update.user.get_full_name|default:update.user.username }}
+                                        on {{ update.date|date:"M d, Y g:i A" }}
+                                        {% if update.new_status %}
+                                        - Status changed to {{ update.get_new_status_display }}
+                                        {% endif %}
+                                    </small>
+                                </div>
+                                {% if not update.is_public %}
+                                <span class="badge bg-secondary">Internal</span>
+                                {% endif %}
+                            </div>
+                            <div class="mt-2">
+                                {{ update.get_markdown|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center text-muted py-3">
+                    <i class="fas fa-comments fa-2x mb-2"></i>
+                    <p>No updates yet</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Add Update Form -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-plus me-2"></i>Add Update</h6>
+            </div>
+            <div class="card-body">
+                <form method="post" action="{% url 'onboarding:add_ticket_update' ticket.pk %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ quick_update_form.comment.label_tag }}
+                        {{ quick_update_form.comment }}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ quick_update_form.new_status.label_tag }}
+                            {{ quick_update_form.new_status }}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                {{ quick_update_form.is_public }}
+                                {{ quick_update_form.is_public.label_tag }}
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">
+                        <i class="fas fa-plus me-1"></i>Add Update
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Ticket Information -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Ticket Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <strong>Ticket ID:</strong><br>
+                        {{ ticket.ticket_id }}
+                    </div>
+                    <div class="col-12">
+                        <strong>Type:</strong><br>
+                        <span class="badge bg-{{ ticket.ticket_type_css_class }}">{{ ticket.get_ticket_type_display }}</span>
+                    </div>
+                    <div class="col-12">
+                        <strong>Category:</strong><br>
+                        {{ ticket.category.title }}
+                    </div>
+                    <div class="col-12">
+                        <strong>Created:</strong><br>
+                        {{ ticket.created|date:"M d, Y g:i A" }}
+                    </div>
+                    <div class="col-12">
+                        <strong>Last Modified:</strong><br>
+                        {{ ticket.modified|date:"M d, Y g:i A" }}
+                    </div>
+                    {% if ticket.resolved_date %}
+                    <div class="col-12">
+                        <strong>Resolved:</strong><br>
+                        {{ ticket.resolved_date|date:"M d, Y g:i A" }}
+                    </div>
+                    {% endif %}
+                    {% if ticket.closed_date %}
+                    <div class="col-12">
+                        <strong>Closed:</strong><br>
+                        {{ ticket.closed_date|date:"M d, Y g:i A" }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporter Information -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user me-2"></i>Reporter</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <strong>Name:</strong><br>
+                        {{ ticket.reporter_name }}
+                    </div>
+                    <div class="col-12">
+                        <strong>Email:</strong><br>
+                        <a href="mailto:{{ ticket.reporter_email }}">{{ ticket.reporter_email }}</a>
+                    </div>
+                    {% if ticket.reporter_phone %}
+                    <div class="col-12">
+                        <strong>Phone:</strong><br>
+                        <a href="tel:{{ ticket.reporter_phone }}">{{ ticket.reporter_phone }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignment -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-user-cog me-2"></i>Assignment</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <strong>Assigned To:</strong><br>
+                        {% if ticket.assigned_to %}
+                        {{ ticket.assigned_to.get_full_name|default:ticket.assigned_to.username }}
+                        {% else %}
+                        <span class="text-muted">Unassigned</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <form method="post" action="{% url 'onboarding:assign_ticket' ticket.pk %}" class="mt-3">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        <select name="assigned_to" class="form-select form-select-sm">
+                            <option value="">Select assignee...</option>
+                            {% for user in all_staff_users %}
+                            <option value="{{ user.id }}" {% if user==ticket.assigned_to %}selected{% endif %}>
+                                {{ user.get_full_name|default:user.username }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-user-check me-1"></i>Reassign
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SLA Information -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>SLA Status</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-12">
+                        <strong>Hours Open:</strong><br>
+                        {{ ticket.hours_since_created }} hours
+                    </div>
+                    <div class="col-12">
+                        <strong>SLA Status:</strong><br>
+                        {% if ticket.is_overdue %}
+                        <span class="badge bg-danger">OVERDUE</span>
+                        {% else %}
+                        <span class="badge bg-success">Within SLA</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .timeline {
+        position: relative;
+        padding-left: 3rem;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .timeline-marker {
+        position: absolute;
+        left: -3rem;
+        width: 2rem;
+        height: 2rem;
+        background: #007bff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .timeline-item:not(:last-child)::before {
+        content: '';
+        position: absolute;
+        left: -2rem;
+        top: 2rem;
+        bottom: -2rem;
+        width: 2px;
+        background: #dee2e6;
+    }
+
+    .timeline-content {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+    }
+</style>
+
+{% endblock %}

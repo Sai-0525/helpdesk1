@@ -1,0 +1,73 @@
+{% extends 'onboarding/base.html' %}
+
+{% block title %}Templates - HR Onboarding System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-clipboard-list me-2"></i>Onboarding Templates</h1>
+    <a href="{% url 'onboarding:template_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i>New Template
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if templates %}
+        <div class="row">
+            {% for template in templates %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">{{ template.name }}</h6>
+                        {% if template.is_active %}
+                        <span class="badge bg-success">Active</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>Department:</strong> {{ template.department.title }}
+                        </div>
+                        {% if template.position_types %}
+                        <div class="mb-2">
+                            <strong>Position Types:</strong> {{ template.position_types }}
+                        </div>
+                        {% endif %}
+                        <div class="mb-2">
+                            <strong>Duration:</strong> {{ template.estimated_duration_days }} days
+                        </div>
+                        {% if template.checklist_items %}
+                        <div class="mb-2">
+                            <strong>Checklist Items:</strong> {{ template.checklist_items|length }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group btn-group-sm w-100">
+                            <button class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-1"></i>View
+                            </button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="fas fa-clipboard-list fa-3x mb-3"></i>
+            <h5>No templates found</h5>
+            <p>Create templates to standardize your onboarding processes.</p>
+            <a href="{% url 'onboarding:template_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>Create Template
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

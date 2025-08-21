@@ -1,0 +1,89 @@
+{% extends 'onboarding/base.html' %}
+
+{% block title %}Settings - HR Onboarding System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-cog me-2"></i>User Settings</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <h6 class="text-primary mb-3">Email Notifications</h6>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.email_on_request_assign }}
+                            <label class="form-check-label" for="{{ form.email_on_request_assign.id_for_label }}">
+                                {{ form.email_on_request_assign.label }}
+                            </label>
+                        </div>
+                        {% if form.email_on_request_assign.help_text %}
+                        <div class="form-text">{{ form.email_on_request_assign.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form.email_on_request_update }}
+                            <label class="form-check-label" for="{{ form.email_on_request_update.id_for_label }}">
+                                {{ form.email_on_request_update.label }}
+                            </label>
+                        </div>
+                        {% if form.email_on_request_update.help_text %}
+                        <div class="form-text">{{ form.email_on_request_update.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+
+                    <h6 class="text-primary mb-3">Dashboard Display</h6>
+
+                    <div class="mb-3">
+                        <div class="form-check">
+                            {{ form.dashboard_show_pending }}
+                            <label class="form-check-label" for="{{ form.dashboard_show_pending.id_for_label }}">
+                                {{ form.dashboard_show_pending.label }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check">
+                            {{ form.dashboard_show_overdue }}
+                            <label class="form-check-label" for="{{ form.dashboard_show_overdue.id_for_label }}">
+                                {{ form.dashboard_show_overdue.label }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="text-primary mb-3">Display Preferences</h6>
+
+                    <div class="mb-4">
+                        <label for="{{ form.requests_per_page.id_for_label }}" class="form-label">
+                            {{ form.requests_per_page.label }}
+                        </label>
+                        {{ form.requests_per_page }}
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'onboarding:dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

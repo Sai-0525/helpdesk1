@@ -1,0 +1,201 @@
+{% extends 'onboarding/base.html' %}
+
+{% block title %}Update Request - HR Onboarding System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-edit me-2"></i>Update Onboarding Request
+                </h4>
+                <small class="text-muted">{{ object.request_id }} - {{ object.new_hire_name }}</small>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <!-- Basic Information -->
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">Basic Information</h6>
+                        </div>
+
+                        <div class="col-md-8 mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-2 mb-3">
+                            <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label
+                                }}</label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                            <div class="text-danger">{{ form.status.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-2 mb-3">
+                            <label for="{{ form.urgency.id_for_label }}" class="form-label">{{ form.urgency.label
+                                }}</label>
+                            {{ form.urgency }}
+                            {% if form.urgency.errors %}
+                            <div class="text-danger">{{ form.urgency.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <!-- New Hire Information -->
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">New Hire Information</h6>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.new_hire_name.id_for_label }}" class="form-label">{{
+                                form.new_hire_name.label }}</label>
+                            {{ form.new_hire_name }}
+                            {% if form.new_hire_name.errors %}
+                            <div class="text-danger">{{ form.new_hire_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.new_hire_email.id_for_label }}" class="form-label">{{
+                                form.new_hire_email.label }}</label>
+                            {{ form.new_hire_email }}
+                            {% if form.new_hire_email.errors %}
+                            <div class="text-danger">{{ form.new_hire_email.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.position.id_for_label }}" class="form-label">{{ form.position.label
+                                }}</label>
+                            {{ form.position }}
+                            {% if form.position.errors %}
+                            <div class="text-danger">{{ form.position.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.new_hire_phone.id_for_label }}" class="form-label">{{
+                                form.new_hire_phone.label }}</label>
+                            {{ form.new_hire_phone }}
+                            {% if form.new_hire_phone.errors %}
+                            <div class="text-danger">{{ form.new_hire_phone.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.start_date.id_for_label }}" class="form-label">{{ form.start_date.label
+                                }}</label>
+                            {{ form.start_date }}
+                            {% if form.start_date.errors %}
+                            <div class="text-danger">{{ form.start_date.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.hiring_manager.id_for_label }}" class="form-label">{{
+                                form.hiring_manager.label }}</label>
+                            {{ form.hiring_manager }}
+                            {% if form.hiring_manager.errors %}
+                            <div class="text-danger">{{ form.hiring_manager.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label for="{{ form.hr_coordinator.id_for_label }}" class="form-label">{{
+                                form.hr_coordinator.label }}</label>
+                            {{ form.hr_coordinator }}
+                            {% if form.hr_coordinator.errors %}
+                            <div class="text-danger">{{ form.hr_coordinator.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <!-- Task Tracking -->
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">Task Tracking</h6>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.equipment_needed.id_for_label }}" class="form-label">{{
+                                form.equipment_needed.label }}</label>
+                            {{ form.equipment_needed }}
+                            {% if form.equipment_needed.errors %}
+                            <div class="text-danger">{{ form.equipment_needed.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.completed_tasks.id_for_label }}" class="form-label">{{
+                                form.completed_tasks.label }}</label>
+                            {{ form.completed_tasks }}
+                            {% if form.completed_tasks.errors %}
+                            <div class="text-danger">{{ form.completed_tasks.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.pending_tasks.id_for_label }}" class="form-label">{{
+                                form.pending_tasks.label }}</label>
+                            {{ form.pending_tasks }}
+                            {% if form.pending_tasks.errors %}
+                            <div class="text-danger">{{ form.pending_tasks.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row">
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <h6 class="text-primary mb-3">Additional Information</h6>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">{{
+                                form.description.label }}</label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <div class="text-danger">{{ form.description.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.notes.id_for_label }}" class="form-label">{{ form.notes.label }}</label>
+                            {{ form.notes }}
+                            {% if form.notes.errors %}
+                            <div class="text-danger">{{ form.notes.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'onboarding:request_detail' object.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Update Request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
