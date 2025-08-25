@@ -1,6 +1,6 @@
 {% extends 'onboarding/base.html' %}
 
-{% block title %}{{ ticket.ticket_id }} - ITIL Service Desk{% endblock %}
+{% block title %}{{ ticket.ticket_id }} - NXZEN Service Desk{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -43,7 +43,7 @@
                         <div class="row g-2">
                             <div class="col-6">
                                 <strong>Status:</strong><br>
-                                <span class="badge bg-{{ ticket.priority_css_class }}">{{ ticket.get_status_display
+                                <span class="badge bg-{{ ticket.status_css_class }}">{{ ticket.get_status_display
                                     }}</span>
                             </div>
                             <div class="col-6">
@@ -167,7 +167,8 @@
                     </div>
                     <div class="col-12">
                         <strong>Type:</strong><br>
-                        <span class="badge bg-{{ ticket.ticket_type_css_class }}">{{ ticket.get_ticket_type_display }}</span>
+                        <span class="badge bg-{{ ticket.ticket_type_css_class }}">{{ ticket.get_ticket_type_display
+                            }}</span>
                     </div>
                     <div class="col-12">
                         <strong>Category:</strong><br>
@@ -244,7 +245,7 @@
                         <select name="assigned_to" class="form-select form-select-sm">
                             <option value="">Select assignee...</option>
                             {% for user in all_staff_users %}
-                            <option value="{{ user.id }}" {% if user==ticket.assigned_to %}selected{% endif %}>
+                            <option value="{{ user.id }}" {% if user.id == ticket.assigned_to %}selected{% endif %}>
                                 {{ user.get_full_name|default:user.username }}
                             </option>
                             {% endfor %}

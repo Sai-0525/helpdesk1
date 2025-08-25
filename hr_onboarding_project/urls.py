@@ -33,6 +33,6 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Customize admin site
-admin.site.site_header = "ITIL Ticketing System Administration"
-admin.site.site_title = "ITIL Ticketing Admin"
-admin.site.index_title = "Welcome to ITIL Ticketing System Administration"
+admin.site.site_header = "NXZEN Ticketing System Administration"
+admin.site.site_title = "NXZEN Ticketing Admin"
+admin.site.index_title = "Welcome to NXZEN Ticketing System Administration"

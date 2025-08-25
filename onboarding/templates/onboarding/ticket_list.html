@@ -1,6 +1,6 @@
 {% extends 'onboarding/base.html' %}
 
-{% block title %}Tickets - ITIL Service Desk{% endblock %}
+{% block title %}Tickets - NXZEN Service Desk{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -110,7 +110,7 @@
                             </span>
                         </td>
                         <td>
-                            <span class="badge bg-{{ ticket.status|yesno:'success,warning,secondary' }}">
+                            <span class="badge bg-{{ ticket.status_css_class }}">
                                 {{ ticket.get_status_display }}
                             </span>
                         </td>

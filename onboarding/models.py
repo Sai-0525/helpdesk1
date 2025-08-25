@@ -371,6 +371,19 @@ class Ticket(models.Model):
             return "secondary"
 
     @property
+    def status_css_class(self):
+        """Return Bootstrap CSS class for status."""
+        status_classes = {
+            self.NEW_STATUS: "primary",
+            self.IN_PROGRESS_STATUS: "info",
+            self.WAITING_STATUS: "warning",
+            self.RESOLVED_STATUS: "success",
+            self.CLOSED_STATUS: "secondary",
+            self.CANCELLED_STATUS: "danger",
+        }
+        return status_classes.get(self.status, "secondary")
+
+    @property
     def ticket_type_css_class(self):
         """Return Bootstrap CSS class for ticket type."""
         type_classes = {
@@ -459,7 +472,7 @@ class TicketUpdate(models.Model):
 
     new_status = models.IntegerField(
         _("New Status"),
-        choices=OnboardingRequest.STATUS_CHOICES,
+        choices=Ticket.STATUS_CHOICES,
         blank=True,
         null=True,
         help_text=_("If status was changed, what was it changed to?")
